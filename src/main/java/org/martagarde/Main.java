@@ -1,10 +1,13 @@
 package org.martagarde;
 import java.awt.*;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Random;
 
 public class Main {
     static String input = "";
     static Scanner sc = new Scanner(System.in);
+    static Random rand = new Random();
     static Player player = new Player("TestDummy", 50, 10);
     static Room currentRoom;
     static Boolean roomChange = true;
@@ -215,6 +218,9 @@ public class Main {
             case "use" :
                 useFunction(inputWords);
                 break; // TODO: citu actionu izpildisana
+            case "fight" :
+                fightFunction();
+                break;
             case "exit" :
                 System.out.println("You have chosen to exit the game.");
                 running = false;
@@ -287,5 +293,49 @@ public class Main {
         }
     }
 
+    // TODO: PARTAISIT ENEMY UN PLAYER ATKARIGUS NO INTERFACE or something tur bija kkas cits arii
+    public static void fightFunction() {
+        // Hashmap<entity, int> uzglabas katra cinas dalibnieka uzmesto initiative
+        // paskatities vai ir citadaks saraksts kur nevar uzglabat vairakas vienadas vertibas
+        // jo tad ir problemas pievienot secibas sarakstaa ja ir vairaki vienadi initiative
+        // tad uztaisit loopu kas pievieno listam pec kartas no lielaka uz mazako initiative
+        if (currentRoom.getEnemy() != null) { // ja istaba ir enemy
+            // kaut ka uzmet kaulinus katram dalibniekam
+            // sataisa sarakstu
+            // battle loopam padod sarakstu
+            // battleLoop();
+        } else { // ja istaba nav enemy
+            System.out.println("You can't fight anyone here.");
+        }
+    }
+
+    public static void battleLoop(List turnOrder) {
+        boolean active = true;
+        while (active) {
+            // parbauda vai kads nav miris (hp = 0)
+            // ja ir miris tad beidz loopu
+            /*
+            for (int i = 0; i < turnOrder.getItemCount() - 1; i++) {
+                if (turnOrder.getItem(i).getHp() <= 0) {
+                    // lai varetu izdarit gethp jauztaisa interface or something
+                }
+            }
+            */
+            // pirmais sarakstaa izdara darbiibu
+
+            // darbiba tiek apstradata
+            // pirmais saraksta tiek parvietots uz beigam
+            turnOrder.add(turnOrder.getItem(0));
+            turnOrder.remove(0);
+        }
+        // nezinu ieksa while loop vai ara
+        // izvada kurs ir miris- ja speletajs tad izvada zinu un running = false
+    }
+
+    public static int diceRoll (int faceCount) { // faceCount ir skaldnu skaits metamajam kaulinam d20 d15 utt
+        // rand.nextInt(max - min + 1) + min
+        // max = faceCount  min = 1  jo metamais kaulins var uzmest vertibu no 1 - skaldnu skaits
+        return rand.nextInt(faceCount - 1 + 1) + 1;
+    }
 
 }
