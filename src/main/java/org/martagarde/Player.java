@@ -2,35 +2,8 @@ package org.martagarde;
 
 import java.util.HashMap;
 
-public class Player {
-    public String name;
-    public int attack;
-    public int hp;
+public class Player extends Entity{
     public HashMap<String, Integer> inventory = new HashMap<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getAttack() {
-        return attack;
-    }
-
-    public void setAttack(int attack) {
-        this.attack = attack;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
 
     public void getInventory() {
         // TODO: maybe uztaisit lai smuki tabula izprintejas
@@ -80,12 +53,12 @@ public class Player {
     public Player() { // default konstruktors
         setName("Default Player");
         setHp(20);
-        setAttack(5);
+        setAtk(5);
     }
 
-    public Player(String name, Integer hp, Integer attack) {
+    public Player(String name, int hp, int atk) {
         setName(name);
         setHp(hp);
-        setAttack(attack);
+        setAtk(atk);
     }
 }

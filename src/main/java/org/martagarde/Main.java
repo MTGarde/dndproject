@@ -293,20 +293,32 @@ public class Main {
         }
     }
 
-    // TODO: PARTAISIT ENEMY UN PLAYER ATKARIGUS NO INTERFACE or something tur bija kkas cits arii
     public static void fightFunction() {
-        // Hashmap<entity, int> uzglabas katra cinas dalibnieka uzmesto initiative
+        HashMap<Entity, Integer> initiative = new HashMap<>();// uzglaba katra cinas dalibnieka uzmesto initiative
         // paskatities vai ir citadaks saraksts kur nevar uzglabat vairakas vienadas vertibas
         // jo tad ir problemas pievienot secibas sarakstaa ja ir vairaki vienadi initiative
         // tad uztaisit loopu kas pievieno listam pec kartas no lielaka uz mazako initiative
-        if (currentRoom.getEnemy() != null) { // ja istaba ir enemy
-            // kaut ka uzmet kaulinus katram dalibniekam
-            // sataisa sarakstu
+
+        if (currentRoom.getEnemy() != null) { // ja istaba ir ar ko cinities
+            // kaut ka uzmet kaulinus katram dalibniekam // TODO uztaisit par loop
+            initiative.put(player, diceRoll(20));
+            initiative.put(currentRoom.getEnemy(), diceRoll(20));
+            // sataisa sarakstu no lielaka uz mazako initiative
+            //battleLoop(sortInitiative(initiative));
+
             // battle loopam padod sarakstu
-            // battleLoop();
+            // battleLoop(saraksts);
         } else { // ja istaba nav enemy
             System.out.println("You can't fight anyone here.");
         }
+    }
+
+    public HashMap<Entity, Integer> sortInitiative(HashMap<Entity, Integer> initiative) {
+        HashMap<Entity, Integer> sortedInitiative = new HashMap<>();
+
+        // bubble sort? based on values?
+
+        return sortedInitiative;
     }
 
     public static void battleLoop(List turnOrder) {
@@ -334,7 +346,7 @@ public class Main {
 
     public static int diceRoll (int faceCount) { // faceCount ir skaldnu skaits metamajam kaulinam d20 d15 utt
         // rand.nextInt(max - min + 1) + min
-        // max = faceCount  min = 1  jo metamais kaulins var uzmest vertibu no 1 - skaldnu skaits
+        // max = faceCount  min = 1  jo metamais kaulins var uzmest vertibu no 1 -> skaldnu skaits
         return rand.nextInt(faceCount - 1 + 1) + 1;
     }
 
