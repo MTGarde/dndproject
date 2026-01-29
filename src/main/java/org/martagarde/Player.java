@@ -52,13 +52,15 @@ public class Player extends Entity{
 
     public Player() { // default konstruktors
         setName("Default Player");
-        setHp(20);
+        setMaxHp(20);
+        setCurrentHp(getMaxHp());
         setAtk(5);
     }
 
     public Player(String name, int hp, int atk) {
         setName(name);
-        setHp(hp);
+        setMaxHp(hp);
+        setCurrentHp(getMaxHp());
         setAtk(atk);
     }
 }

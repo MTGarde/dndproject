@@ -4,7 +4,8 @@ public class Enemy extends Entity{
 
     public Enemy() { // default konstruktors
         setName("Default Goblin");
-        setHp(5);
+        setMaxHp(5);
+        setCurrentHp(getMaxHp());
         setAtk(1);
     }
 

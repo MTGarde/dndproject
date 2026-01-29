@@ -1,8 +1,8 @@
 package org.martagarde;
+
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Scanner;
-import java.util.Random;
+import java.awt.List;
+import java.util.*;
 
 public class Main {
     static String input = "";
@@ -89,6 +89,8 @@ public class Main {
         leftRoom.setSouthRoom(southRoom);
         northRoom.setNorthRoom(exitRoom);
 
+        leftRoom.setEnemy(new Enemy());
+
         startingRoom.addItems("torch", 1);
 
         // TODO izdomat actionus
@@ -104,16 +106,16 @@ public class Main {
         currentRoom = startingRoom;
 
         while (running) { // game loop
-            if(roomChange) {
+            if (roomChange) {
                 System.out.println(currentRoom.getTitle());
                 System.out.println(currentRoom.getDescription());
                 roomChange = false;
             }
-            if(currentRoom == exitRoom){
+            if (currentRoom == exitRoom) {
                 System.out.println("You have won.");
                 break;
             }
-            if(currentRoom == southRoom){ // pirms sada eventa vajadzetu ability check
+            if (currentRoom == southRoom) { // pirms sada eventa vajadzetu ability check
                 System.out.println("The floor caves in beneath your feet and you fall to your untimely demise. \nYou have died.");
                 break;
             }
@@ -177,20 +179,20 @@ public class Main {
         } while (go);
         */
 
-        for(char i : inputArray) { // iet cauri katram simbolam virknee
+        for (char i : inputArray) { // iet cauri katram simbolam virknee
             counter++; // skaita indexu
 
-            if(i == ' '){ // ja atrod atstarpi
+            if (i == ' ') { // ja atrod atstarpi
                 endIndex = counter; // atstarpes index = varda beigu index
 
-                if(!input.substring(startIndex, endIndex).trim().isEmpty()) { // ja string nav tukss tad pievieno sarakstam
+                if (!input.substring(startIndex, endIndex).trim().isEmpty()) { // ja string nav tukss tad pievieno sarakstam
                     words.add(input.substring(startIndex, endIndex).trim()); // tas ir gadijumos, ja ir vairakas atstarpes un vins atstarpi uztver ka vardu
                 }
 
                 startIndex = endIndex; // parvieto sakuma index uz nakama varda sakumu
 
             } else if (counter == inputArray.length - 1) { // ja ir pedejais char sarakstaa
-                                                           // te nevar buut tukss string jo funkcijai sakuma tiek padots jau trimots strings
+                // te nevar buut tukss string jo funkcijai sakuma tiek padots jau trimots strings
                 words.add(input.substring(startIndex).trim()); // pievieno atlikuso substring bez endIndex
             }
         }
@@ -198,34 +200,34 @@ public class Main {
         return words;
     }
 
-    public static void doAction(List inputWords){
+    public static void doAction(List inputWords) {
         // funkcija sanem sadalitu user inputu un izpilda darbibu
-        switch(inputWords.getItem(0)){
-            case "go" :
+        switch (inputWords.getItem(0)) {
+            case "go":
                 goFunction(inputWords);
                 break;
-            case "look" :
+            case "look":
                 System.out.println("You look around.");
                 lookFunction(inputWords);
                 break;
-            case "take" :
+            case "take":
                 takeFunction(inputWords);
                 break;
-            case "inventory" :
+            case "inventory":
                 System.out.println("You look in your inventory, you have: ");
                 player.getInventory();
                 break;
-            case "use" :
+            case "use":
                 useFunction(inputWords);
                 break; // TODO: citu actionu izpildisana
-            case "fight" :
+            case "fight":
                 fightFunction();
                 break;
-            case "exit" :
+            case "exit":
                 System.out.println("You have chosen to exit the game.");
                 running = false;
                 break;
-            default :
+            default:
                 System.out.println("You can't do that. Here are the possible actions:");
                 System.out.println("go [direction]  |  look [somewhere]  |  take [something]\ninventory  |  use [something]  |  exit");
                 break;
@@ -233,27 +235,27 @@ public class Main {
 
     }
 
-    public static void goFunction (List dividedInput) {
-        if (currentRoom.availableDirections.containsKey(dividedInput.getItem(dividedInput.getItemCount()-1)) // ja eksistee tads virziens
-                && currentRoom.availableDirections.get(dividedInput.getItem(dividedInput.getItemCount()-1))) { // un tas ir true (atverts)
-            switch (dividedInput.getItem(dividedInput.getItemCount()-1)) {
-                case "south" :
+    public static void goFunction(List dividedInput) {
+        if (currentRoom.availableDirections.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1)) // ja eksistee tads virziens
+                && currentRoom.availableDirections.get(dividedInput.getItem(dividedInput.getItemCount() - 1))) { // un tas ir true (atverts)
+            switch (dividedInput.getItem(dividedInput.getItemCount() - 1)) {
+                case "south":
                     currentRoom = currentRoom.getSouthRoom();
                     roomChange = true;
                     break;
-                case "north" :
+                case "north":
                     currentRoom = currentRoom.getNorthRoom();
                     roomChange = true;
                     break;
-                case "east" :
+                case "east":
                     currentRoom = currentRoom.getEastRoom();
                     roomChange = true;
                     break;
-                case "west" :
+                case "west":
                     currentRoom = currentRoom.getWestRoom();
                     roomChange = true;
                     break;
-                default :
+                default:
                     System.out.println("You didn't go anywhere.");
                     break;
             }
@@ -262,92 +264,189 @@ public class Main {
         }
     }
 
-    public static void lookFunction (List dividedInput) {
+    public static void lookFunction(List dividedInput) {
         // TODO: uztaisiit ka var apskatiitiess prieksmetus
         // ja dividedInput pedejais strings ir kkads objekts tad izvada taa objekta aprakstu
         currentRoom.getAvailableDirections();
     }
 
-    public static void takeFunction (List dividedInput) {
+    public static void takeFunction(List dividedInput) {
         // ja istaba eksiste tads prieksmets
-        if (currentRoom.availableItems.containsKey(dividedInput.getItem(dividedInput.getItemCount()-1))) {
+        if (currentRoom.availableItems.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1))) {
             // tad pievieno speletajam inventory
-            player.addToInventory(dividedInput.getItem(dividedInput.getItemCount()-1));
+            player.addToInventory(dividedInput.getItem(dividedInput.getItemCount() - 1));
             // izdzes no istabas to prieksmetu
-            currentRoom.availableItems.remove(dividedInput.getItem(dividedInput.getItemCount()-1));
+            currentRoom.availableItems.remove(dividedInput.getItem(dividedInput.getItemCount() - 1));
 
-            System.out.println("You have picked up " + dividedInput.getItem(dividedInput.getItemCount()-1));
+            System.out.println("You have picked up " + dividedInput.getItem(dividedInput.getItemCount() - 1));
         } else {
             System.out.println("The item you're trying to pick up is not there.");
         }
     }
 
-    public static void useFunction (List dividedInput) {
+    public static void useFunction(List dividedInput) {
         // TODO: izdomat lietu izmantosanas logiku
         // pagaidam izmantosana nozime tikai to ka iznem no inventory un items pazud
-        if (player.inventory.containsKey(dividedInput.getItem(dividedInput.getItemCount()-1))) {
-            player.removeFromInventory(dividedInput.getItem(dividedInput.getItemCount()-1));
-            System.out.println("You have used " + dividedInput.getItem(dividedInput.getItemCount()-1));
+        if (player.inventory.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1))) {
+            player.removeFromInventory(dividedInput.getItem(dividedInput.getItemCount() - 1));
+            System.out.println("You have used " + dividedInput.getItem(dividedInput.getItemCount() - 1));
         } else {
             System.out.println("You don't have this item in your inventory.");
         }
     }
 
     public static void fightFunction() {
-        HashMap<Entity, Integer> initiative = new HashMap<>();// uzglaba katra cinas dalibnieka uzmesto initiative
-        // paskatities vai ir citadaks saraksts kur nevar uzglabat vairakas vienadas vertibas
-        // jo tad ir problemas pievienot secibas sarakstaa ja ir vairaki vienadi initiative
-        // tad uztaisit loopu kas pievieno listam pec kartas no lielaka uz mazako initiative
+        TreeMap<Integer, Entity> initiative = new TreeMap<>();// uzglaba katra cinas dalibnieka uzmesto initiative bez duplikatiem
+        // TODO ! Initiative ir d20 + DEX modifiers
 
         if (currentRoom.getEnemy() != null) { // ja istaba ir ar ko cinities
-            // kaut ka uzmet kaulinus katram dalibniekam // TODO uztaisit par loop
-            initiative.put(player, diceRoll(20));
-            initiative.put(currentRoom.getEnemy(), diceRoll(20));
-            // sataisa sarakstu no lielaka uz mazako initiative
-            //battleLoop(sortInitiative(initiative));
+            // TODO uztaisit normalu loop lai var but vairaki speletaji un enemiji
+            // for each cinas dalibnieks
+            // uzmet skaitli
+            // ja tads jau ir sarakstaa tad uzmet citu
+            // atkarto ieprieksejo lidz ir jauns skaitlis
+            // pievieno TreeMapaa
 
-            // battle loopam padod sarakstu
-            // battleLoop(saraksts);
+            int dice = diceRoll(20); // uzmet skaitli
+            initiative.put(dice, player); // pievieno
+            dice = diceRoll(20); // uzmet nakamo
+            if (initiative.containsKey(dice)) dice = diceRoll(20); // ja tads skaitlis jau ir tad uzmet velreiz- uztaisit ka ciklu lai turpina mest kamer nav jauns skaitlis
+            initiative.put(dice, currentRoom.getEnemy());// pievieno
+
+            sortInitiative(initiative); // izveido sarakstu ar entity kas piedalas battle
+            battleLoop();
         } else { // ja istaba nav enemy
             System.out.println("You can't fight anyone here.");
         }
     }
 
-    public HashMap<Entity, Integer> sortInitiative(HashMap<Entity, Integer> initiative) {
-        HashMap<Entity, Integer> sortedInitiative = new HashMap<>();
+    // TODO: kko izdarit ar to battleQueue idk maybe lai sortInitiative vinu atgriez un tad uztaisit lai battleLoopam japadod saraksts or smth
+    static java.util.List<Entity> battleQueue = new ArrayList<>();
 
-        // bubble sort? based on values?
-
-        return sortedInitiative;
+    public static void sortInitiative(TreeMap<Integer, Entity> initiative) {
+        for(Integer i : initiative.keySet()) { // TreeMap automatiski sakarto pec key bet no mazaka uz lielako v
+            battleQueue.add(initiative.get(i)); // uztaisa sarakstu tikai ar entity                            v
+        }                                       //                                                             v
+        Collections.reverse(battleQueue); // tapec te ir reverse <--------------------------------------------<
     }
 
-    public static void battleLoop(List turnOrder) {
+    public static void battleLoop() {
         boolean active = true;
         while (active) {
-            // parbauda vai kads nav miris (hp = 0)
-            // ja ir miris tad beidz loopu
-            /*
-            for (int i = 0; i < turnOrder.getItemCount() - 1; i++) {
-                if (turnOrder.getItem(i).getHp() <= 0) {
-                    // lai varetu izdarit gethp jauztaisa interface or something
+            for (Entity entity : battleQueue) { // iet cauri katram cinas dalibniekam
+                if (entity.getCurrentHp() <= 0) { // parbauda vai ir miris
+                    System.out.println(entity.getName() + " has died.");
+                    battleQueue.remove(entity);// iznem miruso no saraksta
+                } else {
+                    System.out.println(entity.getName() + " | " + entity.getCurrentHp() + "/" + entity.getMaxHp() + " HP");
                 }
             }
-            */
-            // pirmais sarakstaa izdara darbiibu
+            // TODO: velak uztaisit ka vins parbauda ka jabut vismaz vienam speletajam un enemy lai cina turpinatos
+            if (battleQueue.size() < 2) {
+                active = false;
+                continue;
+            }
 
-            // darbiba tiek apstradata
-            // pirmais saraksta tiek parvietots uz beigam
-            turnOrder.add(turnOrder.getItem(0));
-            turnOrder.remove(0);
+
+
+            if(battleQueue.getFirst().getClass().equals(Player.class)) {
+                System.out.println("What will you do?");
+            } else {
+                System.out.println( battleQueue.getFirst().getName() + " is making a move ...");
+            }
+            handleBattleAction(battleQueue.getFirst());// pirmais sarakstaa izdara darbiibu
+
+            battleQueue.add(battleQueue.getFirst());// pirmais saraksta tiek parvietots uz beigam
+            battleQueue.removeFirst();
         }
-        // nezinu ieksa while loop vai ara
-        // izvada kurs ir miris- ja speletajs tad izvada zinu un running = false
+        // izvada kurs ir miris- ja speletajs tad izvada zinu un running = false (parstaj game loop)
+        if(player.getCurrentHp() <= 0) {
+            System.out.println("You have died.");
+            running = false;
+        } else {
+            System.out.println("You are victorious!");
+        }
     }
 
-    public static int diceRoll (int faceCount) { // faceCount ir skaldnu skaits metamajam kaulinam d20 d15 utt
+    public static int diceRoll(int faceCount) { // faceCount ir skaldnu skaits metamajam kaulinam d20 d15 utt
         // rand.nextInt(max - min + 1) + min
         // max = faceCount  min = 1  jo metamais kaulins var uzmest vertibu no 1 -> skaldnu skaits
         return rand.nextInt(faceCount - 1 + 1) + 1;
+    }
+
+    public static HashMap<String, Integer> battleActions = new HashMap<>();
+    static {
+        battleActions.put("attack", 1);
+        battleActions.put("heal", 2);
+        battleActions.put("shield", 3);
+        battleActions.put("run", 4);
+    } // TODO actioni katram entity pašam savi something something
+    // kipa enemy var tikai noteiktas darbibas no kuram vins izvelas un tad nevajag tos skaitlus
+
+    public static int actionToNumber(String action) {
+        if(battleActions.containsKey(action)) return battleActions.get(action); // ja ir tada darbiba tad atgriez attiecigo skaitli
+        return 0; // ja nav tad ir default
+    }
+
+    public static void handleBattleAction(Entity currentDoer) {
+        // varbut darbibu pielidzinat skaitlim lai enemy var uzrollot random skaiti darbibai
+        // kipa hashmapaa attack - 1, heal - 2, guard - 3, utt
+        // un tad enemy var dice rollot 1-3 un izdarit darbibu
+        int action;
+        boolean repeat = false;
+        do {
+
+            if(currentDoer.getClass().equals(Player.class)) { // ja sobrid gajiens ir speletajam
+                input = sc.nextLine(); // speletajs ievada darbibu
+                action = actionToNumber(input);
+            } else { // ja gajiens ir pretiniekam
+                action = diceRoll(3); // izvelas random darbibu
+            }
+
+            switch (action) {
+                case 1: // attack // TODO: attack funkcija atseviski
+                    if(currentDoer.getClass().equals(Player.class)) {// ja uzbruk speletajs tad jaizvelas, kuram enemy uzbrukt
+                        repeat = true;
+                        do {
+                            System.out.println("Who will you attack?");// izvelas kuram enemy uzbrukt
+                            input = sc.nextLine();
+                            // parbauda vai tads enemy eksiste
+                            for (Entity e : battleQueue) {
+                                if (e.getName().equals(input)) {
+                                    System.out.println("You attack " + input);
+                                    e.takeDamage(currentDoer.getAtk()); // damage funkcija jau ir shield parbaude
+                                    // maybe parbaude vai neuzbruk citam playerim- nelaut ta darit
+                                    repeat = false;
+                                    break;
+                                }
+                            }
+                            if (repeat) System.out.println("This enemy doesn't exist");
+                        } while(repeat);
+
+                    } else {
+                        // TODO: pagaidam ir tikai viens players bet vajag lai izvelas randoma ja vairaki piedalas cina
+                        System.out.println(currentDoer.getName() + " attacks!");
+                        player.takeDamage(currentDoer.getAtk());
+                    }
+                    repeat = false;
+                    break;
+                case 2: // heal
+                    // velak implementot itemus un spellus
+                    System.out.println(currentDoer.getName() + " heals!");
+                    currentDoer.heal(5); // iebāzt random lai ir random daudzums healam
+                    break;
+                case 3: // shield
+                    System.out.println(currentDoer.getName() + " shields!");
+                    currentDoer.setShielding(true); // uz pusi samazina sanemto damage
+                    break;
+                case 4: // run
+                    System.out.println("Your enemy is preventing you from running away.");
+                    break;
+                default:
+                    System.out.println("You can't do that");
+                    repeat = true;
+            }
+        } while(repeat);
     }
 
 }
