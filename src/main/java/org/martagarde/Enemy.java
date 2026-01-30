@@ -9,4 +9,10 @@ public class Enemy extends Entity{
         setAtk(1);
     }
 
+    public Enemy(String name, int hp, int atk) {
+        setName(name);
+        setMaxHp(hp);
+        setCurrentHp(getMaxHp());
+        setAtk(atk);
+    }
 }

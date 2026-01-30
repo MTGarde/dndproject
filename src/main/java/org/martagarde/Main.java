@@ -1,7 +1,6 @@
 package org.martagarde;
 
-import java.awt.*;
-import java.awt.List;
+// import java.awt.List;
 import java.util.*;
 
 public class Main {
@@ -13,74 +12,10 @@ public class Main {
     static Boolean roomChange = true;
     static Boolean running = true;
 
-    /*
-    public static void doAction (String untrimmedAction) {
-        String action = untrimmedAction.trim(); // varbut pirma varda parbaudee trimot sakumu vvvvvvv nevis .contains()
-        if (action.contains("look") || action.contains("look") && action.contains("around") || action.contains("look around")) {
-            currentRoom.getAvailableDirections();
-        } else if (action.contains("go")) {
-            if (currentRoom.availableDirections.containsKey(action.substring(2).trim()) && currentRoom.availableDirections.get(action.substring(2).trim())) {
-                switch (action.substring(2).trim()) {
-                    case "south" :
-                        currentRoom = currentRoom.getSouthRoom();
-                        roomChange = true;
-                        break;
-                    case "north" :
-                        currentRoom = currentRoom.getNorthRoom();
-                        roomChange = true;
-                        break;
-                    case "east" :
-                        currentRoom = currentRoom.getEastRoom();
-                        roomChange = true;
-                        break;
-                    case "west" :
-                        currentRoom = currentRoom.getWestRoom();
-                        roomChange = true;
-                        break;
-                    default :
-                        System.out.println("You didn't go anywhere.");
-                        break;
-                }
-            } else {
-                System.out.println("You can't go in that direction.");
-            }
-        }else if (action.contains("take")) {
-            if (currentRoom.availableItems.containsKey(action.substring(4).trim())) {
-                player.addToInventory(action.substring(4).trim());
-                currentRoom.availableItems.remove(action.substring(4).trim());
-                System.out.println("You have picked up " + action.substring(4).trim());
-            } else {
-                System.out.println("The item you're trying to pick up is not there...\nare you okay??");
-            }
-        } else if (action.contains("inventory")) {
-            player.getInventory();
-//            System.out.println("Items in this room:");
-//            currentRoom.getAvailableItems();
-        } else if (action.contains("use")) {
-            if (player.inventory.containsKey(action.substring(4).trim())) {
-                player.removeFromInventory(action.substring(4).trim());
-                System.out.println("You have used " + action.substring(4).trim());
-            } else {
-                System.out.println("You don't have this item in your inventory.");
-            }
-//        } else if (currentRoom.availableActions.containsKey(action)) {
-//            if (!currentRoom.completedActions.containsKey(action)) {
-//                System.out.println("You " + action);
-//                currentRoom.completedActions.put(action, "");
-//            } else {
-//                System.out.println("You have already done that.");
-//            }
-        }
-            else {
-            System.out.println("That is not a valid action.");
-        }
-    }
-    */
-
     public static void main(String[] args) {
         Room startingRoom = new Room();
-        Room leftRoom = new Room("Cold stone room", "You walk into a dark, cold room. You can't see anything.");
-        Room northRoom = new Room("Green room", "The room is oozing with vines and other flora you can't identify.\nYou can make out the silhouette of a door on the opposite side of the room.");
+        Room leftRoom = new Room("Cold stone room", "You walk into a dark, cold room. There is a small goblin sitting in the middle of the room.");
+        Room northRoom = new Room("Green room", "The room is oozing with vines and other flora you can't identify.\nSuddenly, a skeleton crawls out from the far corner of the room.");
         Room southRoom = new Room("Empty room", "The room is empty. Nothing but a few bricks and stones lay on the floor. \nYou hear a faint cracking sound...");
         Room exitRoom = new Room("Dungeon entrance", "You find yourself at the entrance of a dungeon.\nThe sun is shining on your weary face as you look around the vast field.\nYou finally escaped.");
 
@@ -89,11 +24,11 @@ public class Main {
         leftRoom.setSouthRoom(southRoom);
         northRoom.setNorthRoom(exitRoom);
 
-        leftRoom.setEnemy(new Enemy());
+        leftRoom.setEnemy(new Enemy("Goblin", 20, 3));
+        northRoom.setEnemy(new Enemy("Skeleton", 30, 4));
 
         startingRoom.addItems("torch", 1);
 
-        // TODO izdomat actionus
         /*
         Action action1 = new Action("open box", "You opened the box. There is a key.");
         Action action2 = new Action("take key", "You picked up a key");
@@ -129,64 +64,23 @@ public class Main {
         }
     }
 
-    public static List divideInput(String input) {
+    public static List<String> divideInput(String input) {
         char[] inputArray = input.toCharArray();
-        List words = new List();
+        List<String> words = new ArrayList<>();
         int startIndex = 0;
         int endIndex;
         int counter = -1; // -1 jo cikla sakuma +1 un pirmajam jabut 0
-
-        /*
-        do{
-            System.out.println("start = " + startIndex);
-            endIndex = input.substring(startIndex).trim().indexOf(" "); // atrod index atstarpei
-            System.out.println("end = " + endIndex);
-            if(endIndex == -1){ // -1 nozime, ka nav atrasta atstarpe
-                System.out.println("atstarpes nav.");
-                endIndex = input.length(); // - 1;
-                System.out.println("pedejais index = " + endIndex);
-            } else {
-                System.out.println("atstarpe ir.");
-                // endIndex --; // atstarpes index - 1, jo tas bus varda beigas
-                System.out.println("varda beigu index = " + endIndex);
-            }
-            // !!!!!!!! problema ir ka vins sak skaitit atstarpes index no startIndex pozicijas un tad nav pareizs endIndex
-            System.out.println("vards, ko pievieno sarakstam: " + input.substring(startIndex, endIndex));
-            words.add(input.substring(startIndex, endIndex + startIndex).trim()); // trim just in case prieksaa palikusi atstarpe
-            startIndex = endIndex; // + 1; // end + 1 drosi vien bus atstarpe, tapec sakuma trim() substringu
-                                       // tas ir lai gadijuma ja lietotajs ievada vairakas atstarpes taas netraucetu
-
-        }while(startIndex < input.length() - 1); // -1 jo length atgriez simbolu skaitu nevis pedejo indeksu
-                                               // cikls beidzas kad endIndex sakrit ar ievadita teksta pedejo indeksu
-        */
-
-        /*
-        do {
-            System.out.println("----------------");
-
-            if (endIndex == -1) {
-                System.out.println("No space");
-                System.out.println("Word: " + input.substring(startIndex).trim());
-                words.add(input.substring(startIndex).trim());
-                go = false;
-            } else {
-                System.out.println("Yes space");
-                System.out.println("Word: " + input.substring(startIndex, endIndex + startIndex).trim());
-                endIndex += startIndex;
-                words.add(input.substring(startIndex, endIndex).trim());
-                startIndex = endIndex;
-            }
-        } while (go);
-        */
+        String substr;
 
         for (char i : inputArray) { // iet cauri katram simbolam virknee
             counter++; // skaita indexu
 
             if (i == ' ') { // ja atrod atstarpi
                 endIndex = counter; // atstarpes index = varda beigu index
+                substr = input.substring(startIndex, endIndex).trim();
 
-                if (!input.substring(startIndex, endIndex).trim().isEmpty()) { // ja string nav tukss tad pievieno sarakstam
-                    words.add(input.substring(startIndex, endIndex).trim()); // tas ir gadijumos, ja ir vairakas atstarpes un vins atstarpi uztver ka vardu
+                if (!substr.isEmpty()) { // ja string nav tukss tad pievieno sarakstam
+                    words.add(substr); // tas ir gadijumos, ja ir vairakas atstarpes un vins atstarpi uztver ka vardu
                 }
 
                 startIndex = endIndex; // parvieto sakuma index uz nakama varda sakumu
@@ -197,12 +91,15 @@ public class Main {
             }
         }
 
+        // iznem ara filler vardus
+        words.removeIf(w -> w.equals(FillerWords.the.toString()));
+
         return words;
     }
 
-    public static void doAction(List inputWords) {
+    public static void doAction(List<String> inputWords) {
         // funkcija sanem sadalitu user inputu un izpilda darbibu
-        switch (inputWords.getItem(0)) {
+        switch (inputWords.getFirst()) {
             case "go":
                 goFunction(inputWords);
                 break;
@@ -235,10 +132,10 @@ public class Main {
 
     }
 
-    public static void goFunction(List dividedInput) {
-        if (currentRoom.availableDirections.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1)) // ja eksistee tads virziens
-                && currentRoom.availableDirections.get(dividedInput.getItem(dividedInput.getItemCount() - 1))) { // un tas ir true (atverts)
-            switch (dividedInput.getItem(dividedInput.getItemCount() - 1)) {
+    public static void goFunction(List<String> dividedInput) {
+        if (currentRoom.availableDirections.containsKey(dividedInput.getLast()) // ja eksistee tads virziens
+                && currentRoom.availableDirections.get(dividedInput.getLast())) { // un tas ir true (atverts)
+            switch (dividedInput.getLast()) { // getLast, jo ievada [darbiba] [prieksmets] un pedejais ir tas, pec ka izpilda darbibu
                 case "south":
                     currentRoom = currentRoom.getSouthRoom();
                     roomChange = true;
@@ -264,32 +161,32 @@ public class Main {
         }
     }
 
-    public static void lookFunction(List dividedInput) {
+    public static void lookFunction(List<String> dividedInput) {
         // TODO: uztaisiit ka var apskatiitiess prieksmetus
         // ja dividedInput pedejais strings ir kkads objekts tad izvada taa objekta aprakstu
         currentRoom.getAvailableDirections();
     }
 
-    public static void takeFunction(List dividedInput) {
+    public static void takeFunction(List<String> dividedInput) { // TODO uzlabot, jo te vins strada tikai ar viena varda prieksmetiem
         // ja istaba eksiste tads prieksmets
-        if (currentRoom.availableItems.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1))) {
+        if (currentRoom.availableItems.containsKey(dividedInput.getLast())) {
             // tad pievieno speletajam inventory
-            player.addToInventory(dividedInput.getItem(dividedInput.getItemCount() - 1));
+            player.addToInventory(dividedInput.getLast());
             // izdzes no istabas to prieksmetu
-            currentRoom.availableItems.remove(dividedInput.getItem(dividedInput.getItemCount() - 1));
+            currentRoom.availableItems.remove(dividedInput.getLast());
 
-            System.out.println("You have picked up " + dividedInput.getItem(dividedInput.getItemCount() - 1));
+            System.out.println("You have picked up " + dividedInput.getLast());
         } else {
             System.out.println("The item you're trying to pick up is not there.");
         }
     }
 
-    public static void useFunction(List dividedInput) {
+    public static void useFunction(List<String> dividedInput) {
         // TODO: izdomat lietu izmantosanas logiku
         // pagaidam izmantosana nozime tikai to ka iznem no inventory un items pazud
-        if (player.inventory.containsKey(dividedInput.getItem(dividedInput.getItemCount() - 1))) {
-            player.removeFromInventory(dividedInput.getItem(dividedInput.getItemCount() - 1));
-            System.out.println("You have used " + dividedInput.getItem(dividedInput.getItemCount() - 1));
+        if (player.inventory.containsKey(dividedInput.getLast())) {
+            player.removeFromInventory(dividedInput.getLast());
+            System.out.println("You have used " + dividedInput.getLast());
         } else {
             System.out.println("You don't have this item in your inventory.");
         }
@@ -320,7 +217,6 @@ public class Main {
         }
     }
 
-    // TODO: kko izdarit ar to battleQueue idk maybe lai sortInitiative vinu atgriez un tad uztaisit lai battleLoopam japadod saraksts or smth
     static java.util.List<Entity> battleQueue = new ArrayList<>();
 
     public static void sortInitiative(TreeMap<Integer, Entity> initiative) {
@@ -341,13 +237,13 @@ public class Main {
                     System.out.println(entity.getName() + " | " + entity.getCurrentHp() + "/" + entity.getMaxHp() + " HP");
                 }
             }
-            // TODO: velak uztaisit ka vins parbauda ka jabut vismaz vienam speletajam un enemy lai cina turpinatos
-            if (battleQueue.size() < 2) {
+
+            // parbauda ka jabut vismaz vienam speletajam un enemy lai cina turpinatos
+            // ja saraksta nav neviena enemy vai player
+            if (battleQueue.stream().noneMatch(e -> e instanceof Enemy) || battleQueue.stream().noneMatch(e -> e instanceof Player)) {
                 active = false;
                 continue;
             }
-
-
 
             if(battleQueue.getFirst().getClass().equals(Player.class)) {
                 System.out.println("What will you do?");
@@ -366,6 +262,7 @@ public class Main {
         } else {
             System.out.println("You are victorious!");
         }
+        battleQueue.clear();
     }
 
     public static int diceRoll(int faceCount) { // faceCount ir skaldnu skaits metamajam kaulinam d20 d15 utt
@@ -404,7 +301,7 @@ public class Main {
             }
 
             switch (action) {
-                case 1: // attack // TODO: attack funkcija atseviski
+                case 1: // attack // TODO: attack funkcija atseviski? jo tas repeat tiek izmantots vairakos
                     if(currentDoer.getClass().equals(Player.class)) {// ja uzbruk speletajs tad jaizvelas, kuram enemy uzbrukt
                         repeat = true;
                         do {
@@ -422,13 +319,13 @@ public class Main {
                             }
                             if (repeat) System.out.println("This enemy doesn't exist");
                         } while(repeat);
-
                     } else {
                         // TODO: pagaidam ir tikai viens players bet vajag lai izvelas randoma ja vairaki piedalas cina
                         System.out.println(currentDoer.getName() + " attacks!");
                         player.takeDamage(currentDoer.getAtk());
                     }
                     repeat = false;
+
                     break;
                 case 2: // heal
                     // velak implementot itemus un spellus
